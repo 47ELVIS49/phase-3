@@ -33,3 +33,24 @@ class Dictionary:
         self.cursor.execute('''SELECT meaning FROM meanings WHERE word_id = (SELECT id FROM words WHERE word = ?)''', (word,))
         meanings = self.cursor.fetchall()
         return [meaning[0] for meaning in meanings]
+
+    def delete_word(self, word):
+        self.cursor.execute('''DELETE FROM meanings WHERE word_id = (SELECT id FROM words WHERE word = ?)''', (word,))
+        self.cursor.execute('''DELETE FROM words WHERE word = ?''', (word,))
+        self.connection.commit()
+        print(f"'{word}' deleted from dictionary.")
+
+    def update_word(self, old_word, new_word, new_meanings):
+        self.cursor.execute('''UPDATE words SET word = ? WHERE word = ?''', (new_word, old_word))
+        self.cursor.execute('''DELETE FROM meanings WHERE word_id = (SELECT id FROM words WHERE word = ?)''', (old_word,))
+        word_id = self.cursor.lastrowid
+
+        for meaning in new_meanings:
+            self.cursor.execute('''INSERT INTO meanings (word_id, meaning) VALUES (?, ?)''', (word_id, meaning))
+
+        self.connection.commit()
+        print(f"'{old_word}' updated to '{new_word}' in dictionary.")
+
+    def close_connection(self):
+        self.connection.close()
+
