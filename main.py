@@ -1,6 +1,5 @@
-from dictionary import Dictionary
-
-class CLI:
+from dictionary import Dictionary  # Import the Dictionary class from the dictionary module
+class Interphase:
     def __init__(self, dictionary):
         self.dictionary = dictionary
 
@@ -59,8 +58,8 @@ class CLI:
 
 def main():
     dictionary = Dictionary('dictionary.db')
-    cli = CLI(dictionary)
-    cli.run()
+    interphase = Interphase(dictionary)
+    interphase.run()
     dictionary.close_connection()
 
 if __name__ == "__main__":
